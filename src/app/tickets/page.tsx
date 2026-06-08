@@ -1,12 +1,18 @@
-import { getTickets, shortTimeAgo } from "@/action/ticket.action";
+import { getTickets } from "@/action/ticket.action";
+import TicketItem from "@/components/custom/ticket-items";
+import { getCurrentUser } from "@/lib/current-user";
 import { logEvent } from "@/utils/sentry";
-import { getPriorityClass } from "@/utils/ui";
-import Link from "next/link";
-
+import { redirect } from "next/navigation";
 
 
 
 const Tickets = async () => {
+    const user = await getCurrentUser();
+
+    if (!user) {
+        logEvent("User has logged out",'auth',{},'info')
+        redirect("/")
+    }
     const tickets = await getTickets();
 
     return (
@@ -53,44 +59,7 @@ const Tickets = async () => {
                     </div>
                 ) : (
                     tickets.map((ticket) => (
-                        <div
-                            key={ticket.id}
-                            className="grid items-center border-b py-3 last:border-b-0 hover:bg-gray-50"
-                            style={{
-                                gridTemplateColumns: "2fr 3fr 1fr 1fr 1fr 1fr",
-                            }}
-                        >
-                            <div className="px-4">
-                                <Link
-                                    href={`/tickets/${ticket.id}`}
-                                    className="text-blue-600 hover:underline"
-                                >
-                                    {ticket.subject}
-                                </Link>
-                            </div>
-
-                            <div className="px-4 line-clamp-2">
-                                {ticket.description}
-                            </div>
-
-                            <div className="px-4">
-                                <span className={getPriorityClass(ticket.priority)}>
-                                    {ticket.priority}
-                                </span>
-                            </div>
-
-                            <div className="px-4">
-                                {ticket.status}
-                            </div>
-
-                            <div className="px-4 whitespace-nowrap">
-                                {shortTimeAgo(ticket.createdAt)}
-                            </div>
-
-                            <div className="px-4 whitespace-nowrap">
-                                {shortTimeAgo(ticket.updatedAt)}
-                            </div>
-                        </div>
+                        <TicketItem key={ticket.id} ticket={ticket}  />                    
                     ))
                 )}
             </div>

@@ -3,28 +3,29 @@
 import { logoutUser } from "@/action/auth.action"
 import { Button } from "../ui/button"
 import { useActionState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 
 const LogoutButton = () => {
 
-    const router = useRouter();
     const initialState = {
         success: false,
-        message: ''
+        message: '',
+        submitted:false
     }
 
     const [state, formAction] = useActionState(logoutUser, initialState)
 
     useEffect (() => {
+        if (!state.submitted) return
+
         if (state.success) {
             toast.success("logout Successful")
-            router.push('/login')
-        } else if (state.message) {
+        }
+        else if (state.message) {
             toast.error(state.message)
         }
-    },[state, router])
+    },[state])
     return (
         <>
             <form action={formAction}>

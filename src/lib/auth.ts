@@ -2,18 +2,14 @@ import {SignJWT, jwtVerify} from 'jose'
 import { cookies } from "next/headers";
 import { logEvent } from '@/utils/sentry'
 
-type AuthTokenPayload = {
-    userId: string
-    email: string
-    role?: string
-}
+
 
 const secret = new TextEncoder().encode(process.env.AUTH_SECRET)
 const cookieName = 'auth-token'
 
 // Encrypt and sign token
 
-export async function signAuthToken(payload: AuthTokenPayload) {
+export async function signAuthToken(payload: any) {
     try {
         const token = await new SignJWT(payload).setProtectedHeader({alg: 'HS256'}).setIssuedAt().setExpirationTime('7d').sign(secret)
 

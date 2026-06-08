@@ -1,5 +1,10 @@
-const loginPage = () => {
+import LoginPage from "@/components/custom/login"
 
+
+const login = () => {
+    return (
+        <LoginPage />
+    )
 }
 
-export default loginPage
+export default login
